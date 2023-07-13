@@ -49,7 +49,7 @@ end
 
 local function get_hovered_node()
   local hovered_line = vim.api.nvim_win_get_cursor(so.view.winnr)[1]
-  local node = so.state.outline_items[hovered_line]
+  local node = so.state.flattened_outline_items[hovered_line]
   return node
 end
 
@@ -120,20 +120,16 @@ local function update_hover()
     end
     local markdown_lines = {}
     if result ~= nil then
-      markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(
-        result.contents
-      )
+      markdown_lines =
+        vim.lsp.util.convert_input_to_markdown_lines(result.contents)
     end
     markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
     if vim.tbl_isempty(markdown_lines) then
       markdown_lines = { '###No info available!' }
     end
 
-    markdown_lines = vim.lsp.util.stylize_markdown(
-      state.hover_buf,
-      markdown_lines,
-      {}
-    )
+    markdown_lines =
+      vim.lsp.util.stylize_markdown(state.hover_buf, markdown_lines, {})
 
     if state.hover_buf ~= nil then
       vim.api.nvim_buf_set_lines(state.hover_buf, 0, -1, 0, markdown_lines)
